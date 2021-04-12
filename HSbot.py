@@ -20,7 +20,7 @@ def tablero_listo(tablero):
 
 env = gym.make('high-v0')
 
-initial = 200
+initial = 1000
 
 ptjs = []
 max_p = []
@@ -53,7 +53,7 @@ def jugar(initial):
                 ptjs.append(puntaje)
                 break
         
-        env.print_tablero()
+        env.render()
         
         rewards.append(reward)
         #if reward == max(ptjs):

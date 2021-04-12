@@ -37,7 +37,7 @@ class HighEnv(gym.Env):
         self.matriz = xd
         return self.dado(), self.puesto
 
-    def print_tablero(self):
+    def render(self):
         def fill(s):
             if len(s) < 2:
                 return " "+s
