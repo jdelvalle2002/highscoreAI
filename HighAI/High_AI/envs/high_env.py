@@ -1,7 +1,7 @@
 import random
 import json
 import gym
-from gym import spaces
+from gym.spaces.discrete import Discrete
 import pandas as pd
 import numpy as np
 from gym import error, spaces, utils
@@ -9,22 +9,23 @@ from gym.utils import seeding
 
 class HighEnv(gym.Env):
     """An enviroment to play Highscore"""
-    metadata = {'render.modes': ['human']}
-    def __init__(self):
+    def __init__(self,config):
         self.puesto = True
         self.p = 0 # puntaje
         self.matriz = []
         self.msj = []
-        self.coordenadas = ["a1","a2","a3","a4","a5","b1","b2","b3","b4","b5","c1", "c2", "c3", "c4", "c5", "d1", "d2", "d3", "d4", "d5", "e1", "e2", "e3", "e4", "e5"]
+        #self.coordenadas = ["a1","a2","a3","a4","a5","b1","b2","b3","b4","b5","c1", "c2", "c3", "c4", "c5", "d1", "d2", "d3", "d4", "d5", "e1", "e2", "e3", "e4", "e5"]
         self.pa = 0 #puntaje anterior
         self.d = 0
+        #######
+        self.observation_space = spaces.Discrete(13)
+        self.action_space = spaces.Discrete(25)
     def dado(self):
         a = random.randint(1,6)
         b = random.randint(1,6)
         valor = a+b
         return valor        
     def reset(self):
-        self.coordenadas = ["a1","a2","a3","a4","a5","b1","b2","b3","b4","b5","c1", "c2", "c3", "c4", "c5", "d1", "d2", "d3", "d4", "d5", "e1", "e2", "e3", "e4", "e5"]
         self.pa = 0
         self.p = 0
         self.puesto = True
@@ -35,7 +36,8 @@ class HighEnv(gym.Env):
             xd.append(a[:])
             i += 1
         self.matriz = xd
-        return self.dado(), self.puesto
+        self.d = self.dado()
+        return self.d
 
     def render(self):
         def fill(s):
@@ -200,19 +202,25 @@ class HighEnv(gym.Env):
         return puntos    
     def step(self,action):
         num = self.d
-        col = action[0]
-        fil = int(action[1])
-        col = "abcde".find(col)
-        #print("col",col,"fil",fil)
-        if self.matriz[fil-1][col] != 0:
+        fil = action//5
+        col = action%5
+        if self.matriz[fil][col] != 0:
             self.puesto = False
+            reward = -24
         else:
-            self.matriz[fil-1][col] = num
+            self.matriz[fil][col] = num
             self.puesto = True
             self.d = self.dado()
-        p = self.contar_puntos()
-        reward =  p-self.pa
+            p = self.contar_puntos()
+            reward =  p-self.pa
+        done = True
+        for line in self.matriz:
+            if 0 in line:
+                done = False
+                break
+
+
         self.pa = self.contar_puntos()
-        return self.d, reward, self.puesto, self.matriz 
+        return self.d, reward, done, {"puesto":self.puesto}
     
     #######################################

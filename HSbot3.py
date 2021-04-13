@@ -1,34 +1,25 @@
 import gym
 import random
 import numpy as np
-
-from gym import spaces
+from ray import tune
+from ray.rllib.agents.dqn import DQNTrainer
 
 import High_AI
 
 from time import time
 
 
+
 start = time()
 
-def tablero_listo(tablero):
-    for line in tablero:
-        if 0 in line:
-            return False
-    return True
 
 env = gym.make('high-v0')
 
-initial = 200
+initial = 100
 intentos = 150
-#### EMPECEMOS A IMPLEMENTAR EL Q-ALG
 ptjs = []
 max_p = []
-'''
-def jugada(env):
-    action = random.sample(env.coord,1)
-    return action[0]
-'''
+
 rewards_all = []
 def jugar(initial):
     end = 0
@@ -41,25 +32,22 @@ def jugar(initial):
             exploration_rate_threshold = random.uniform(0, 1)
             if exploration_rate_threshold > exploration_rate:
                 #action = np.argmax(q_table[state,:])
-                action = "c3" 
+                action = (2,2) 
                 pass
             else:
-                action = random.choice(env.coordenadas)            
+                action = (random.randint(0,4), random.randint(0,4))            
             
             #action = jugada(coordis)
-            valor, reward, puesto, info = env.step(action)
-            if not puesto:
-                reward = -5
-                #print("###MALA###")
+            valor, reward, done, puesto  = env.step(action)
+            ''''
             if reward > 7:    
-                print("reward:",reward)    
+                print("reward:",reward)
+            '''
+            '''
+            if done:
+                env.render()
+            '''        
             reward_current += reward
-            if tablero_listo(env.matriz):
-                end +=1
-                print("TERMINADO")
-                puntaje = env.contar_puntos()
-                ptjs.append(puntaje)
-                break
         
         env.render()
         
