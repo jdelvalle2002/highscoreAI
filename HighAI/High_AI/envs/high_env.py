@@ -209,9 +209,10 @@ class HighEnv(gym.Env):
         else:
             self.matriz[fil-1][col] = num
             self.puesto = True
+            self.d = self.dado()
         p = self.contar_puntos()
-        r =  p-self.pa
+        reward =  p-self.pa
         self.pa = self.contar_puntos()
-        return action, r, self.puesto, self.matriz 
+        return self.d, reward, self.puesto, self.matriz 
     
     #######################################

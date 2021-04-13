@@ -20,7 +20,7 @@ def tablero_listo(tablero):
 
 env = gym.make('high-v0')
 
-initial = 1000
+initial = 5
 
 ptjs = []
 max_p = []
@@ -36,17 +36,16 @@ def jugar(initial):
     for episode in range(initial):   
         valor, puesto = env.reset()
         reward = 0
-        for j in range(200): # con 150 tuve 10/10
-            if puesto:
-                env.d = env.dado()
-            valor = env.d
+        for j in range(250): # con 150 tuve 10/10
             action = jugada(coordis)
-            pos, r, puesto, tablero = env.step(action)
+            valor, r, puesto, info = env.step(action)
+            
             if not puesto:
-                r = -7
+                r = -5
                 #print("###MALA###")
+            print("reward:",r)    
             reward += r
-            if tablero_listo(tablero):
+            if tablero_listo(env.matriz):
                 end +=1
                 print("TERMINADO")
                 puntaje = env.contar_puntos()
